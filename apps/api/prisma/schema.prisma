@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id               String               @id @default(cuid())
+  playerCode       String               @unique
+  name             String
+  branch           String
+  rollNumber       String?
+  game             String
+  score            Int                  @default(0)
+  avatar           String?
+  prediction       Int?
+  difference       Int?
+  rank             Int?
+  level            Int                  @default(1)
+  battery          Int                  @default(100)
+  wifi             Int                  @default(0)
+  fps              Int                  @default(0)
+  heap             Int                  @default(0)
+  streak           Int                  @default(0)
+  badges           String               @default("[]")
+  team             String?
+  isActive         Boolean              @default(true)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  judgePredictions JudgePrediction[]
+  history          LeaderboardHistory[]
+  telemetry        Telemetry[]
+
+  @@map("Players")
+}
+
+model Game {
+  id        String    @id @default(cuid())
+  gameName  String
+  status    String    @default("queued")
+  startTime DateTime?
+  endTime   DateTime?
+  createdAt DateTime  @default(now())
+
+  @@map("Games")
+}
+
+model Judge {
+  id          String            @id @default(cuid())
+  name        String            @unique
+  predictions JudgePrediction[]
+
+  @@map("Judges")
+}
+
+model JudgePrediction {
+  id         String @id @default(cuid())
+  playerId   String
+  judgeId    String
+  prediction Int
+  player     Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  judge      Judge  @relation(fields: [judgeId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, judgeId])
+  @@map("JudgePredictions")
+}
+
+model ProfessorChallenge {
+  id          String   @id @default(cuid())
+  targetScore Int
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@map("ProfessorChallenge")
+}
+
+model MysteryEvent {
+  id          String   @id @default(cuid())
+  title       String   @unique
+  description String
+  multiplier  Float    @default(1)
+  points      Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@map("MysteryEvents")
+}
+
+model LeaderboardHistory {
+  id        String   @id @default(cuid())
+  playerId  String
+  score     Int
+  timestamp DateTime @default(now())
+  player    Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@map("LeaderboardHistory")
+}
+
+model Telemetry {
+  id        String   @id @default(cuid())
+  playerId  String?
+  name      String
+  game      String
+  score     Int
+  level     Int
+  battery   Int
+  wifi      Int
+  fps       Int
+  heap      Int
+  createdAt DateTime @default(now())
+  player    Player?  @relation(fields: [playerId], references: [id], onDelete: SetNull)
+
+  @@map("Telemetry")
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  tone        String   @default("info")
+  createdAt   DateTime @default(now())
+
+  @@map("Activity")
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("Settings")
+}

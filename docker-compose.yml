@@ -1,0 +1,30 @@
+services:
+  api:
+    build:
+      context: ./apps/api
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      CLIENT_URL: http://localhost:3000
+      DATABASE_URL: file:/app/data/nst-arcade.db
+      JWT_SECRET: change-me-before-the-event
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: nst-arcade
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./data:/app/data
+      - ./apps/api/uploads:/app/uploads
+    command: sh -c "npx prisma migrate deploy && node dist/index.js"
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:4000
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api

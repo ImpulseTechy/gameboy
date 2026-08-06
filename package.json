@@ -1,0 +1,21 @@
+{
+  "name": "nst-arcade-live",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c orange,cyan \"npm run dev -w @nst-arcade/api\" \"npm run dev -w @nst-arcade/web\"",
+    "build": "npm run build -w @nst-arcade/api && npm run build -w @nst-arcade/web",
+    "typecheck": "npm run typecheck -w @nst-arcade/api && npm run typecheck -w @nst-arcade/web",
+    "db:generate": "npm run prisma:generate -w @nst-arcade/api",
+    "db:migrate": "npm run prisma:migrate -w @nst-arcade/api",
+    "db:deploy": "npm run prisma:deploy -w @nst-arcade/api",
+    "db:seed": "npm run db:seed -w @nst-arcade/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}

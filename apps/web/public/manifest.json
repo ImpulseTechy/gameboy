@@ -1,0 +1,17 @@
+{
+  "name": "NST Arcade Live",
+  "short_name": "NST Arcade",
+  "description": "Live esports-style IoT leaderboard for NST orientation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070812",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "/nst-arcade-stage.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
